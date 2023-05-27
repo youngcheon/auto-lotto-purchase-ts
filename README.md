@@ -1,5 +1,5 @@
 # lotto-weekly-purchasing
-Automated weekly lottery purchasing using JavaScript and GitHub Actions
+일주일마다 로또사려고 만듬
 
 
 TODO : github-actions
