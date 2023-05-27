@@ -1,5 +1,5 @@
 # lotto-weekly-purchasing
-일주일마다 로또사려고 만듬
+일주일마다 로또사려고 만듦
 
 
 TODO : github-actions
