@@ -1,0 +1,14 @@
+{
+	"type": "module",
+	"name": "lotto-weekly-purchasing",
+	"version": "1.0.0",
+	"main": "index.js",
+	"repository": "https://github.com/youngcheon/lotto-weekly-purchasing.git",
+	"author": "youngcheon <kimyoungcheon97@gmail.com>",
+	"license": "MIT",
+	"dependencies": {
+		"axios": "^1.4.0",
+		"cheerio": "^1.0.0-rc.12",
+		"dotenv": "^16.0.3"
+	}
+}
