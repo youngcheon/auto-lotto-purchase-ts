@@ -1,18 +1,14 @@
-import { LottoClient } from "./LottoClient.js";
 import Dotenv from "dotenv";
+import Lotto645Controller from "./LottoController.js";
 import { LottoRequest } from "./LottoRequest.js";
 
 Dotenv.config();
 const userId = process.env.USER_ID;
 const userPw = process.env.USER_PW;
-
-const client = new LottoClient();
-
 try {
-	await client.login(userId, userPw);
-	const request = new LottoRequest();
-	const result = client.buyLotto645(request);
-	console.log(result);
+	control = new Lotto645Controller(userId, userPw);
+	request = new LottoRequest(["*,*,*,*,*,*", "*,*,*,*,*,*", "*,*,*,*,*,*", "*,*,*,*,*,*", "*,*,*,*,*,*"]);
+	control.buy(request);
 } catch (err) {
 	console.log(err);
 }
