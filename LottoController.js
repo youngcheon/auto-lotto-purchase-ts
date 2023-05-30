@@ -7,27 +7,16 @@ export default class Lotto645Controller {
 	}
 
 	buy(req) {
-		if (!this.confirmPurchase(req, quiet)) {
-			console.log("✅ 구매를 취소했습니다.");
-		} else {
-			const result = this.client.buy_lotto645(req);
-			this.showResult(result);
-		}
-	}
-
-	confirmPurchase(req) {
-		console.log(`${req.format()}\n❓ 위와 같이 구매합니다`);
-		return true;
+		const result = this.client.buyLotto645(req);
+		this.showResult(result);
 	}
 
 	showResult(body) {
 		const result = body.result || {};
 		if ((result.resultMsg || "FAILURE").toUpperCase() !== "SUCCESS") {
-			logger.debug(`d: ${body}`);
+			console.warn(`d: ${body}`);
 			throw new Error(`구매에 실패했습니다: ${result.resultMsg || "resultMsg is empty"}`);
 		}
-
-		logger.debug(`response body: ${body}`);
 
 		console.log(
 			`✅ 구매를 완료하였습니다.

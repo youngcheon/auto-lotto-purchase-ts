@@ -6,8 +6,8 @@ Dotenv.config();
 const userId = process.env.USER_ID;
 const userPw = process.env.USER_PW;
 try {
-	control = new Lotto645Controller(userId, userPw);
-	request = new LottoRequest(["*,*,*,*,*,*", "*,*,*,*,*,*", "*,*,*,*,*,*", "*,*,*,*,*,*", "*,*,*,*,*,*"]);
+	const control = new Lotto645Controller(userId, userPw);
+	const request = new LottoRequest();
 	control.buy(request);
 } catch (err) {
 	console.log(err);

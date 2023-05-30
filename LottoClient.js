@@ -54,7 +54,6 @@ export class LottoClient {
 
 		this._headers.Cookie = `JSESSIONID=${jSessionId}`;
 	}
-
 	async login(userId, userPw) {
 		const response = await axios.post(
 			this._loginRequestUrl,
@@ -70,7 +69,6 @@ export class LottoClient {
 				timeout: 10000,
 			}
 		);
-
 		const $ = cheerio.load(response.data);
 		const btnCommon = $("a.btn_common");
 
@@ -85,27 +83,25 @@ export class LottoClient {
 		const response = await axios.get(this._roundInfoUrl, { timeout: 10000 });
 		const $ = cheerio.load(response.data);
 		const lastDrawnRound = parseInt($("strong#lottoDrwNo").text(), 10);
-		return lastDrawnRound + 1;
+		const result = lastDrawnRound + 1;
+		return result;
 	}
 
 	async buyLotto645(req) {
 		const round = await this._getRound();
+		const payload = {
+			round,
+			direct: "172.17.20.52",
+			nBuyAmount: 1000,
+			param: [{ genType: "0", arrGameChoiceNum: null, alpabet: "A" }],
+			gameCnt: 1,
+		};
 
-		const response = await axios.post(
-			this._buyLotto645Url,
-			{
-				round: round.toString(),
-				direct: "172.17.20.52",
-				nBuyAmount: (1000 * req.getGameCount()).toString(),
-				param: req.c(),
-				gameCnt: req.getGameCount(),
-			},
-			{
-				headers: this._headers,
-				timeout: 10000,
-			}
-		);
+		const res = await axios.post(this._buyLotto645Url, payload, {
+			headers: this._headers,
+			timeout: 10000,
+		});
 
-		return JSON.parse(response.data);
+		return res.data;
 	}
 }
