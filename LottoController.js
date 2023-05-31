@@ -2,19 +2,21 @@ import { LottoClient } from "./LottoClient.js";
 
 export default class Lotto645Controller {
 	constructor(user_id, user_pw) {
-		this.client = new LottoClient();
-		this.client.login(user_id, user_pw);
+		(async () => {
+			this.client = new LottoClient();
+			const t = await this.client.login(user_id, user_pw);
+			console.log("login", t);
+		})();
 	}
 
-	buy(req) {
-		const result = this.client.buyLotto645(req);
+	async buy() {
+		const result = await this.client.buyLotto645();
 		this.showResult(result);
 	}
 
 	showResult(body) {
 		const result = body.result || {};
 		if ((result.resultMsg || "FAILURE").toUpperCase() !== "SUCCESS") {
-			console.warn(`d: ${body}`);
 			throw new Error(`구매에 실패했습니다: ${result.resultMsg || "resultMsg is empty"}`);
 		}
 

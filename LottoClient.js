@@ -27,33 +27,18 @@ export class LottoClient {
 			"Sec-Fetch-Dest": "document",
 			"Accept-Language": "ko,en-US;q=0.9,en;q=0.8,ko-KR;q=0.7",
 		};
-
-		this._setDefaultSession();
 	}
 
 	async _setDefaultSession() {
 		const response = await axios.get(this._defaultSessionUrl, { timeout: 10000 });
 		const cookies = response.headers["set-cookie"];
-		let jSessionId = "";
 
 		if (response.request.res.responseUrl === this._systemUnderCheckUrl) {
 			throw new Error("동행복권 사이트가 현재 시스템 점검중입니다.");
 		}
-
-		for (const cookie of cookies) {
-			const [name, value] = cookie.split(";")[0].split("=");
-			if (name === "JSESSIONID") {
-				jSessionId = value;
-				break;
-			}
-		}
-
-		if (!jSessionId) {
-			throw new Error("JSESSIONID 쿠키가 정상적으로 세팅되지 않았습니다.");
-		}
-
-		this._headers.Cookie = `JSESSIONID=${jSessionId}`;
+		this._headers.Cookie = cookies.map((cookie) => cookie.split(";")[0]).join("; ");
 	}
+
 	async login(userId, userPw) {
 		const response = await axios.post(
 			this._loginRequestUrl,
@@ -76,6 +61,9 @@ export class LottoClient {
 			throw new Error("로그인에 실패했습니다. 아이디 또는 비밀번호를 확인해주세요.");
 		}
 
+		const cookies = response.headers["set-cookie"];
+		console.log(cookies);
+		this._headers.Cookie = cookies[1].split(";")[0];
 		return "ok";
 	}
 
@@ -87,7 +75,8 @@ export class LottoClient {
 		return result;
 	}
 
-	async buyLotto645(req) {
+	async buyLotto645() {
+		// await this._setDefaultSession();
 		const round = await this._getRound();
 		const payload = {
 			round,
@@ -96,11 +85,13 @@ export class LottoClient {
 			param: [{ genType: "0", arrGameChoiceNum: null, alpabet: "A" }],
 			gameCnt: 1,
 		};
+		console.log(this._headers);
 
 		const res = await axios.post(this._buyLotto645Url, payload, {
 			headers: this._headers,
 			timeout: 10000,
 		});
+		console.log(res.data);
 
 		return res.data;
 	}
