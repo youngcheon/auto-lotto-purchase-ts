@@ -83,9 +83,15 @@ export class LottoClient {
 		const payload = {
 			round: String(round),
 			direct: this._direct,
-			nBuyAmount: String(1000),
-			param: JSON.stringify([{ genType: "0", arrGameChoiceNum: null, alpabet: "A" }]),
-			gameCnt: "1",
+			nBuyAmount: "5000",
+			param: JSON.stringify([
+				{ genType: "0", arrGameChoiceNum: null, alpabet: "A" },
+				{ genType: "0", arrGameChoiceNum: null, alpabet: "B" },
+				{ genType: "0", arrGameChoiceNum: null, alpabet: "C" },
+				{ genType: "0", arrGameChoiceNum: null, alpabet: "D" },
+				{ genType: "0", arrGameChoiceNum: null, alpabet: "E" },
+			]),
+			gameCnt: "5",
 		};
 		const res = await axios.post(this._buyLotto645Url, payload, {
 			headers: this._headers,
