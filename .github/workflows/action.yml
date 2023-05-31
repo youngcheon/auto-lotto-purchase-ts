@@ -1,0 +1,27 @@
+name: LottoBot
+
+on:
+    push
+    # schedule:
+    #     - cron: "55 23 * * 5" # UST 기준의 크론. UST 23:55 는 KST 08:55
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: 14.20.0
+
+            - name: Install npm package
+              run: |
+                  npm install
+
+            - name: exec index.js
+              run: |
+                  node .
+              env:
+                  USER_ID: ${{ secrets.USER_ID }}
+                  USER_PW: ${{ secrets.USER_PW }}
