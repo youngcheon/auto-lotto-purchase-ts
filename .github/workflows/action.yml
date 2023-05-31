@@ -1,9 +1,8 @@
 name: LottoBot
 
 on:
-    push
-    # schedule:
-    #     - cron: "55 23 * * 5" # UST 기준의 크론. UST 23:55 는 KST 08:55
+    schedule:
+        - cron: "55 23 * * 5" # UST 기준의 크론. UST 23:55 는 KST 08:55
 
 jobs:
     build:
