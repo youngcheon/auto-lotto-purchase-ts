@@ -36,10 +36,11 @@ export class LottoClient {
 		if (response.request.res.responseUrl === this._systemUnderCheckUrl) {
 			throw new Error("동행복권 사이트가 현재 시스템 점검중입니다.");
 		}
-		this._headers.Cookie = cookies.map((cookie) => cookie.split(";")[0]).join("; ");
+		this._headers.Cookie = cookies.map((cookie) => cookie.split(";")[0])[1];
 	}
 
 	async login(userId, userPw) {
+		await this._setDefaultSession();
 		const response = await axios.post(
 			this._loginRequestUrl,
 			{
@@ -60,10 +61,6 @@ export class LottoClient {
 		if (btnCommon.length > 0) {
 			throw new Error("로그인에 실패했습니다. 아이디 또는 비밀번호를 확인해주세요.");
 		}
-
-		const cookies = response.headers["set-cookie"];
-		console.log(cookies);
-		this._headers.Cookie = cookies[1].split(";")[0];
 		return "ok";
 	}
 
@@ -76,7 +73,6 @@ export class LottoClient {
 	}
 
 	async buyLotto645() {
-		// await this._setDefaultSession();
 		const round = await this._getRound();
 		const payload = {
 			round,
@@ -85,8 +81,6 @@ export class LottoClient {
 			param: [{ genType: "0", arrGameChoiceNum: null, alpabet: "A" }],
 			gameCnt: 1,
 		};
-		console.log(this._headers);
-
 		const res = await axios.post(this._buyLotto645Url, payload, {
 			headers: this._headers,
 			timeout: 10000,
@@ -94,5 +88,36 @@ export class LottoClient {
 		console.log(res.data);
 
 		return res.data;
+	}
+
+	showResult(body) {
+		const result = body.result || {};
+		if ((result.resultMsg || "FAILURE").toUpperCase() !== "SUCCESS") {
+			throw new Error(`구매에 실패했습니다: ${result.resultMsg || "resultMsg is empty"}`);
+		}
+
+		console.log(
+			`✅ 구매를 완료하였습니다.
+  [Lotto645 Buy Response]
+  ------------------
+  Round:\t\t${result.buyRound}
+  Barcode:\t${result.barCode1} ${result.barCode2} ${result.barCode3} ${result.barCode4} ${result.barCode5} ${result.barCode6}
+  Cost:\t\t${result.nBuyAmount}
+  Numbers:\n${this.formatLottoNumbers(result.arrGameChoiceNum)}
+  Message:\t${result.resultMsg}
+  ----------------------`
+		);
+	}
+
+	formatLottoNumbers(lines) {
+		const modes = {
+			1: "수동",
+			2: "반자동",
+			3: "자동",
+		};
+
+		const tabbedLines = lines.map((line) => `\t\t${line.slice(0, -1)} (${modes[line.slice(-1)]})`);
+
+		return tabbedLines.join("\n");
 	}
 }
