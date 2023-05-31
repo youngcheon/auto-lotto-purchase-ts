@@ -1,7 +1,4 @@
-import Dotenv from "dotenv";
 import { LottoClient } from "./LottoClient.js";
-
-Dotenv.config();
 (async () => {
 	const userId = process.env.USER_ID;
 	const userPw = process.env.USER_PW;

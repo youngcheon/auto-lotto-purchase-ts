@@ -9,6 +9,7 @@ export class LottoClient {
 		this._loginRequestUrl = "https://www.dhlottery.co.kr/userSsl.do?method=login";
 		this._buyLotto645Url = "https://ol.dhlottery.co.kr/olotto/game/execBuy.do";
 		this._roundInfoUrl = "https://www.dhlottery.co.kr/common.do?method=main";
+		this._direct = "172.17.20.52";
 
 		this._headers = {
 			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36",
@@ -29,18 +30,23 @@ export class LottoClient {
 		};
 	}
 
-	async _setDefaultSession() {
+	async setSession() {
 		const response = await axios.get(this._defaultSessionUrl, { timeout: 10000 });
 		const cookies = response.headers["set-cookie"];
 
 		if (response.request.res.responseUrl === this._systemUnderCheckUrl) {
 			throw new Error("동행복권 사이트가 현재 시스템 점검중입니다.");
 		}
-		this._headers.Cookie = cookies.map((cookie) => cookie.split(";")[0])[1];
+		const sessionId = cookies.map((cookie) => cookie.split(";")[0])[1];
+		if (!sessionId.includes("JSESSIONID")) {
+			throw new Error("쿠키가 정상적으로 세팅되지 않았습니다.");
+		}
+
+		this._headers.Cookie = sessionId;
 	}
 
 	async login(userId, userPw) {
-		await this._setDefaultSession();
+		await this.setSession();
 		const response = await axios.post(
 			this._loginRequestUrl,
 			{
@@ -76,7 +82,7 @@ export class LottoClient {
 		const round = await this._getRound();
 		const payload = {
 			round: String(round),
-			direct: "172.17.20.52",
+			direct: this._direct,
 			nBuyAmount: String(1000),
 			param: JSON.stringify([{ genType: "0", arrGameChoiceNum: null, alpabet: "A" }]),
 			gameCnt: "1",
