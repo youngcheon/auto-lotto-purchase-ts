@@ -68,24 +68,25 @@ export class LottoClient {
 		const response = await axios.get(this._roundInfoUrl, { timeout: 10000 });
 		const $ = cheerio.load(response.data);
 		const lastDrawnRound = parseInt($("strong#lottoDrwNo").text(), 10);
-		const result = lastDrawnRound + 1;
-		return result;
+		const round = lastDrawnRound + 1;
+		return round;
 	}
 
 	async buyLotto645() {
 		const round = await this._getRound();
 		const payload = {
-			round,
+			round: String(round),
 			direct: "172.17.20.52",
-			nBuyAmount: 1000,
+			nBuyAmount: "1000",
 			param: [{ genType: "0", arrGameChoiceNum: null, alpabet: "A" }],
-			gameCnt: 1,
+			gameCnt: "1",
 		};
-		const res = await axios.post(this._buyLotto645Url, payload, {
+		console.log(JSON.stringify(payload));
+		const res = await axios.post(this._buyLotto645Url, JSON.stringify(payload), {
 			headers: this._headers,
 			timeout: 10000,
 		});
-		console.log(res.data);
+		console.log(res);
 
 		return res.data;
 	}

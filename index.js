@@ -1,6 +1,4 @@
 import Dotenv from "dotenv";
-import Lotto645Controller from "./LottoController.js";
-import { LottoRequest } from "./LottoRequest.js";
 import { LottoClient } from "./LottoClient.js";
 
 Dotenv.config();
