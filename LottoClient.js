@@ -77,16 +77,14 @@ export class LottoClient {
 		const payload = {
 			round: String(round),
 			direct: "172.17.20.52",
-			nBuyAmount: "1000",
-			param: [{ genType: "0", arrGameChoiceNum: null, alpabet: "A" }],
+			nBuyAmount: String(1000),
+			param: JSON.stringify([{ genType: "0", arrGameChoiceNum: null, alpabet: "A" }]),
 			gameCnt: "1",
 		};
-		console.log(JSON.stringify(payload));
-		const res = await axios.post(this._buyLotto645Url, JSON.stringify(payload), {
+		const res = await axios.post(this._buyLotto645Url, payload, {
 			headers: this._headers,
 			timeout: 10000,
 		});
-		console.log(res);
 
 		return res.data;
 	}
