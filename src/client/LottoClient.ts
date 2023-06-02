@@ -1,7 +1,15 @@
-import axios from "axios";
+import axios, { AxiosRequestHeaders } from "axios";
 import cheerio from "cheerio";
 
 export class LottoClient {
+	_defaultSessionUrl: string;
+	_systemUnderCheckUrl: string;
+	_mainUrl: string;
+	_loginRequestUrl: string;
+	_buyLotto645Url: string;
+	_roundInfoUrl: string;
+	_direct: string;
+	_headers: AxiosRequestHeaders;
 	constructor() {
 		this._defaultSessionUrl = "https://dhlottery.co.kr/gameResult.do?method=byWin&wiselog=H_C_1_1";
 		this._systemUnderCheckUrl = "https://dhlottery.co.kr/index_check.html";
@@ -10,24 +18,24 @@ export class LottoClient {
 		this._buyLotto645Url = "https://ol.dhlottery.co.kr/olotto/game/execBuy.do";
 		this._roundInfoUrl = "https://www.dhlottery.co.kr/common.do?method=main";
 		this._direct = "172.17.20.52";
-
-		this._headers = {
-			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36",
-			Connection: "keep-alive",
-			"Cache-Control": "max-age=0",
-			"sec-ch-ua": '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
-			"sec-ch-ua-mobile": "?0",
-			"Upgrade-Insecure-Requests": "1",
-			Origin: "https://dhlottery.co.kr",
-			"Content-Type": "application/x-www-form-urlencoded",
-			Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-			Referer: "https://dhlottery.co.kr/",
-			"Sec-Fetch-Site": "same-site",
-			"Sec-Fetch-Mode": "navigate",
-			"Sec-Fetch-User": "?1",
-			"Sec-Fetch-Dest": "document",
-			"Accept-Language": "ko,en-US;q=0.9,en;q=0.8,ko-KR;q=0.7",
-		};
+		// this._headers = {
+		// 	"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36",
+		// 	Connection: "keep-alive",
+		// 	"Cache-Control": "max-age=0",
+		// 	"sec-ch-ua": '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
+		// 	"sec-ch-ua-mobile": "?0",
+		// 	"Upgrade-Insecure-Requests": "1",
+		// 	Origin: "https://dhlottery.co.kr",
+		// 	"Content-Type": "application/x-www-form-urlencoded",
+		// 	Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+		// 	Referer: "https://dhlottery.co.kr/",
+		// 	"Sec-Fetch-Site": "same-site",
+		// 	"Sec-Fetch-Mode": "navigate",
+		// 	"Sec-Fetch-User": "?1",
+		// 	"Sec-Fetch-Dest": "document",
+		// 	"Accept-Language": "ko,en-US;q=0.9,en;q=0.8,ko-KR;q=0.7",
+		// } as AxiosRequestHeaders;
+		this._headers;
 	}
 
 	async setSession() {
@@ -37,12 +45,13 @@ export class LottoClient {
 		if (response.request.res.responseUrl === this._systemUnderCheckUrl) {
 			throw new Error("동행복권 사이트가 현재 시스템 점검중입니다.");
 		}
-		const sessionId = cookies.map((cookie) => cookie.split(";")[0])[1];
-		if (!sessionId.includes("JSESSIONID")) {
+		const sessionId = cookies?.map((cookie) => cookie.split(";")[0])[1];
+
+		if (sessionId?.includes("JSESSIONID")) {
+			this._headers.append("Cookie", sessionId);
+		} else {
 			throw new Error("쿠키가 정상적으로 세팅되지 않았습니다.");
 		}
-
-		this._headers.Cookie = sessionId;
 	}
 
 	async login(userId, userPw) {
