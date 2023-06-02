@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders } from "axios";
 import cheerio from "cheerio";
 
 type TResponse = {
@@ -23,7 +23,7 @@ export class DhApiClient {
 	axiosInstance: AxiosInstance;
 	_defaultSessionResource: string;
 	_systemCheckUrl: string;
-	_loginRequstResource: string;
+	_loginRequestResource: string;
 	_mainUrl: string;
 	_roundInfoResource: string;
 	_direct: string;
@@ -31,35 +31,30 @@ export class DhApiClient {
 
 	constructor() {
 		this._direct = "172.17.20.52";
-		this._defaultSessionResource = "gameResult.do?method=byWin&wiselog=H_C_1_1";
+		this._defaultSessionResource = "https://dhlottery.co.kr/gameResult.do?method=byWin&wiselog=H_C_1_1";
 		this._buyLotto645Url = "https://ol.dhlottery.co.kr/olotto/game/execBuy.do";
-		this._roundInfoResource = "common.do?method=main";
+		this._roundInfoResource = "https://dhlottery.co.kr/common.do?method=main";
 		this._systemCheckUrl = "https://dhlottery.co.kr/index_check.html";
 		this._mainUrl = "https://dhlottery.co.kr/common.do?method=main";
-		this._loginRequstResource = "userSsl.do?method=login";
-		this.axiosInstance = axios.create({ baseURL: "https://dhlottery.co.kr" });
-		this.axiosInstance.interceptors.request.use((config) => {
-			config.headers = config.headers ?? {
-				"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36",
-				Connection: "keep-alive",
-				"Cache-Control": "max-age=0",
-				"sec-ch-ua": '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
-				"sec-ch-ua-mobile": "?0",
-				"Upgrade-Insecure-Requests": "1",
-				Origin: "https://dhlottery.co.kr",
-				"Content-Type": "application/x-www-form-urlencoded",
-				Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-				Referer: "https://dhlottery.co.kr/",
-				"Sec-Fetch-Site": "same-site",
-				"Sec-Fetch-Mode": "navigate",
-				"Sec-Fetch-User": "?1",
-				"Sec-Fetch-Dest": "document",
-				"Accept-Language": "ko,en-US;q=0.9,en;q=0.8,ko-KR;q=0.7",
-			};
-			config.timeout = 10000;
-
-			return config;
-		});
+		this._loginRequestResource = "https://dhlottery.co.kr/userSsl.do?method=login";
+		this.axiosInstance = axios.create({ timeout: 10000 });
+		this.axiosInstance.defaults.headers.common = {
+			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36",
+			Connection: "keep-alive",
+			"Cache-Control": "max-age=0",
+			"sec-ch-ua": '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
+			"sec-ch-ua-mobile": "?0",
+			"Upgrade-Insecure-Requests": "1",
+			Origin: "https://dhlottery.co.kr",
+			"Content-Type": "application/x-www-form-urlencoded",
+			Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+			Referer: "https://dhlottery.co.kr/",
+			"Sec-Fetch-Site": "same-site",
+			"Sec-Fetch-Mode": "navigate",
+			"Sec-Fetch-User": "?1",
+			"Sec-Fetch-Dest": "document",
+			"Accept-Language": "ko,en-US;q=0.9,en;q=0.8,ko-KR;q=0.7",
+		};
 	}
 
 	async setCookie(): Promise<TResponse> {
@@ -84,7 +79,7 @@ export class DhApiClient {
 		if (result.error) {
 			throw new Error(result.error);
 		}
-		const { data } = await this.axiosInstance.post(this._loginRequstResource, {
+		const { data } = await this.axiosInstance.post(this._loginRequestResource, {
 			returnUrl: this._mainUrl,
 			userId,
 			password: userPw,
@@ -95,7 +90,7 @@ export class DhApiClient {
 		const $ = cheerio.load(data);
 		const isSuccess = $("a.btn_common").length > 0;
 
-		if (!isSuccess) {
+		if (isSuccess) {
 			return { response: "로그인에 성공했습니다.", error: null };
 		}
 
@@ -119,6 +114,7 @@ export class DhApiClient {
 			gameCnt: "1",
 		};
 		const response = await this.axiosInstance.post(this._buyLotto645Url, body);
+		console.log(response);
 		const result: TBuyResult = response.data?.result;
 		if (result?.resultMsg?.toUpperCase() !== "SUCCESS") {
 			return { response: null, error: `구매에 실패했습니다: ${result?.resultMsg || "result message is empty"}` };
