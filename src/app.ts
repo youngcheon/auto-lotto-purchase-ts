@@ -1,14 +1,11 @@
-import { LottoClient } from "./client/LottoClient";
+import { LottoController } from "./client/LottoController";
+const userId = process.env.USER_ID;
+const userPw = process.env.USER_PW;
 
 (async () => {
-	const userId = process.env.USER_ID;
-	const userPw = process.env.USER_PW;
-	const client = new LottoClient();
-	try {
-		await client.login(userId, userPw);
-		const result = await client.buyLotto645();
-		client.showResult(result);
-	} catch (e) {
-		console.log(e);
-	}
+	const lotto = new LottoController(userId, userPw);
+	const loginResult = await lotto.login();
+	console.log(loginResult);
+	const buyResult = await lotto.buy();
+	console.log(buyResult);
 })();
