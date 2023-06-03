@@ -88,7 +88,6 @@ export class DhApiClient {
 			checkSave: "on",
 			newsEventYn: "",
 		});
-		console.log(response.request);
 
 		const $ = cheerio.load(response.data);
 		const isSuccess = $("a.btn_common").length == 0;
