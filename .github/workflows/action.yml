@@ -14,13 +14,10 @@ jobs:
               with:
                   node-version: 14.20.0
 
-            - name: Install npm package
-              run: |
-                  npm install
-
-            - name: exec index.js
-              run: |
-                  node .
+            - name: Install package
+              run: yarn
+            - name: start
+              run: yarn build; yarn start
               env:
                   USER_ID: ${{ secrets.USER_ID }}
                   USER_PW: ${{ secrets.USER_PW }}
