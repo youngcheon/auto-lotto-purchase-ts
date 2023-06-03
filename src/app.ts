@@ -1,5 +1,5 @@
 import { LottoController } from "./client/LottoController";
-const userId = process.env.USER_ID || "kimyougncheon97";
+const userId = process.env.USER_ID || "kimyoungcheon";
 const userPw = process.env.USER_PW || "rladudcjs12!";
 
 (async () => {
