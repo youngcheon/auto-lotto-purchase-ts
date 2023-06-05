@@ -3,8 +3,8 @@ import Telegram from "./telegram/Telegram";
 
 const userId = process.env.USER_ID;
 const userPw = process.env.USER_PW;
-const token = process.env.TOKEN;
-const chatId = process.env.CHAT_ID;
+const token = process.env.TOKEN || "";
+const chatId = process.env.CHAT_ID || "";
 
 const main = async (): Promise<void> => {
 	const telegram = new Telegram(token, chatId);
