@@ -1,15 +1,20 @@
 import { LottoController } from "./Lotto/LottoController";
+import Telegram from "./telegram/Telegram";
+
 const userId = process.env.USER_ID;
 const userPw = process.env.USER_PW;
+const token = process.env.TOKEN;
+const chatId = process.env.CHAT_ID;
 
 const main = async (): Promise<void> => {
+	const telegram = new Telegram(token, chatId);
 	const lotto = new LottoController(userId, userPw);
 	const loginResult = await lotto.login();
 	if (loginResult.response) {
 		const buyResult = await lotto.buy();
-		console.log(buyResult.response || buyResult.error);
+		await telegram.sendMessage((buyResult.error || buyResult.response) ?? "error");
 	} else {
-		console.log(loginResult.error);
+		await telegram.sendMessage(loginResult.error ?? "error");
 	}
 };
 

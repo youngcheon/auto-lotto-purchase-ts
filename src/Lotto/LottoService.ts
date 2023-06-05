@@ -32,11 +32,11 @@ export class LottoService {
 
 	async requestLogin(userId?: string, userPw?: string): Promise<TResponse> {
 		if (userId === undefined || userPw === undefined) {
-			throw new Error(ERROR.undefinedUser);
+			return { response: null, error: ERROR.undefinedUser };
 		}
 		const result = await this.setCookie();
 		if (result.error) {
-			throw new Error(result.error);
+			return result;
 		}
 		const response = await this.axiosInstance.post(URL.LOGIN_REQUEST, {
 			returnUrl: URL.MAIN,
