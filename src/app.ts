@@ -1,11 +1,17 @@
 import { LottoController } from "./client/LottoController";
-const userId = process.env.USER_ID ;
-const userPw = process.env.USER_PW ;
+const userId = process.env.USER_ID || "kimyoungcheon";
+const userPw = process.env.USER_PW || "Rladudcjs1212!";
 
-(async () => {
+const main = async (): Promise<void> => {
 	const lotto = new LottoController(userId, userPw);
-	const loginResult = await lotto.login();
-	console.log(loginResult);
+
+	const { response, error } = await lotto.login();
+	if (error) {
+		console.log(error);
+		return;
+	}
 	const buyResult = await lotto.buy();
-	console.log(buyResult);
-})();
+	console.log(JSON.stringify(buyResult));
+};
+
+main();

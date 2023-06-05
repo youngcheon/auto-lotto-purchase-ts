@@ -1,4 +1,5 @@
-import dhClient from "../plugin/axios";
+import { TResponse } from "../plugin/type";
+import LottoService from "./LottoService";
 
 export class LottoController {
 	userId?: string;
@@ -8,13 +9,11 @@ export class LottoController {
 		this.userPw = userPw;
 	}
 
-	async login(): Promise<string> {
-		const result = await dhClient.requestLogin(this.userId, this.userPw);
-		return result.error || result.response || "error";
+	async login(): Promise<TResponse> {
+		return await LottoService.requestLogin(this.userId, this.userPw);
 	}
 
-	async buy() {
-		const result = await dhClient.buy();
-		return result.response || result.error || "error";
+	async buy(): Promise<TResponse> {
+		return await LottoService.buy();
 	}
 }
