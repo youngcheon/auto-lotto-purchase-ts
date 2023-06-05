@@ -1,6 +1,6 @@
-import { LottoController } from "./client/LottoController";
-const userId = process.env.USER_ID || "kimyoungcheon";
-const userPw = process.env.USER_PW || "Rladudcjs1212!";
+import { LottoController } from "./Lotto/LottoController";
+const userId = process.env.USER_ID;
+const userPw = process.env.USER_PW;
 
 const main = async (): Promise<void> => {
 	const lotto = new LottoController(userId, userPw);
