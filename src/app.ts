@@ -4,14 +4,13 @@ const userPw = process.env.USER_PW || "Rladudcjs1212!";
 
 const main = async (): Promise<void> => {
 	const lotto = new LottoController(userId, userPw);
-
-	const { response, error } = await lotto.login();
-	if (error) {
-		console.log(error);
-		return;
+	const loginResult = await lotto.login();
+	if (loginResult.response) {
+		const buyResult = await lotto.buy();
+		console.log(buyResult.response || buyResult.error);
+	} else {
+		console.log(loginResult.error);
 	}
-	const buyResult = await lotto.buy();
-	console.log(JSON.stringify(buyResult));
 };
 
 main();

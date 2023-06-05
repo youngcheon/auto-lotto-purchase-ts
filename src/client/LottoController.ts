@@ -7,6 +7,7 @@ export class LottoController {
 	constructor(userId?: string, userPw?: string) {
 		this.userId = userId;
 		this.userPw = userPw;
+		console.log(this.userId);
 	}
 
 	async login(): Promise<TResponse> {
