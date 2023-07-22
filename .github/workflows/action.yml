@@ -1,23 +1,23 @@
-# name: LottoBot
+name: LottoBot
 
-# on:
-#     schedule:
-#         - cron: "55 23 * * 5" # UST 기준의 크론. UST 23:55 는 KST 08:55
+on:
+    schedule:
+        - cron: "55 23 * * 5" # UST 기준의 크론. UST 23:55 는 KST 08:55
 
-# jobs:
-#     build:
-#         runs-on: ubuntu-latest
+jobs:
+    build:
+        runs-on: ubuntu-latest
 
-#         steps:
-#             - uses: actions/checkout@v2
-#             - uses: actions/setup-node@v1
-#               with:
-#                   node-version: 14.20.0
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: 14.20.0
 
-#             - name: Install package
-#               run: yarn
-#             - name: start
-#               run: yarn build; yarn start
-#               env:
-#                   USER_ID: ${{ secrets.USER_ID }}
-#                   USER_PW: ${{ secrets.USER_PW }}
+            - name: Install package
+              run: yarn
+            - name: start
+              run: yarn build; yarn start
+              env:
+                  USER_ID: ${{ secrets.USER_ID }}
+                  USER_PW: ${{ secrets.USER_PW }}
